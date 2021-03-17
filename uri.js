@@ -1,1 +1,1 @@
-module.exports = 'mongodb+srv://root:Bw6k7c2RUuHJJT31@parser.xmsaf.mongodb.net/fanficsdb?retryWrites=true&w=majority';
+module.exports = 'mongodb+srv://<username>:<password>@<cluster>.xmsaf.mongodb.net/<database>?retryWrites=true&w=majority';
