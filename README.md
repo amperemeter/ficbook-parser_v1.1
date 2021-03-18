@@ -1,4 +1,4 @@
-# Ficbooks Works Parser
+# Ficbook Works Parser
 Парсер для сайта [ficbook.net](https://ficbook.net), отслеживающий появление новых фанфиков в выбранных фандомах. 
 
 Чтобы парсер заработал, нужно:
