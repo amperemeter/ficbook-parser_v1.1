@@ -85,7 +85,6 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
         console.log(`${err}`);
       }
     }
-
   } // end fanficObj 
 
   //Создать массив с данными из БД     
@@ -95,6 +94,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       fanfics = [];
 
     console.log(`Всего фэндомов: ${result.length}\n`);
+    // начать подсчет времени выполнения парсинга 
     console.time("Конец работы");
 
     // Создать объекты с использованием данных из БД и добавить их в массив fanfics
@@ -119,5 +119,5 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
   await readCollection(); // вызвать функцию readCollection 
   client.close(); // закрыть подключение с базой данных
-  console.timeEnd("Конец работы"); // посчитать время выполнения парсинга 
+  console.timeEnd("Конец работы"); // завершить подсчет времени выполнения парсинга 
 });
