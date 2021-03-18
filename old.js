@@ -5,18 +5,34 @@ const tress = require('tress'),
   MongoClient = require('mongodb').MongoClient,
   uri = require('./uri');
 
-MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, async function (err, client) {
+MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, function (err, client) {
   assert.equal(null, err);
   const collection = client.db('fanficsdb').collection('fanfics');
 
-  async function scrape(link, fanficContext) {
-    await fanficContext.setArticleCount(0); // установить значение в свойство articleCount
-    console.log(3);
-    await fanficContext.checkIsNew(); // проверить разницу между oldArticleCount и articleCount 
-    console.log(4);
-    await fanficContext.saveCount(); // сохранить значение articleCount в БД   
-    console.log(5);
-  }
+
+  // Получить данные с сайта    
+  function scrape(link, fanficContext) {
+    needle.get(`${link}?p=1`, function (err, res) {
+      // вычислить количество страниц на странице фэндома
+      if (err) throw err;
+      let $ = cheerio.load(res.body),
+        page = $(".pagenav .paging-description b:last-of-type").html();
+      page = page ? page : 1;
+
+      needle.get(`${link}?p=${page}`, function (err, res) {
+        // вычислить количество фанфиков на всех страницах
+        if (err) throw err;
+        $ = cheerio.load(res.body);
+        let articles = $(".fanfic-thumb-block:last-of-type .fanfic-inline").length;
+        if (page != 1) {
+          articles = (page - 1) * 20 + articles;
+        }
+        fanficContext.setArticleCount(articles); // установить значение в свойство articleCount
+        fanficContext.checkIsNew(); // проверить разницу между oldArticleCount и articleCount 
+        fanficContext.saveCount(); // сохранить значение articleCount в БД          
+      });
+    });
+  } // end function scrape
 
   // Рабочий объект  
   let fanficObj = {
@@ -26,9 +42,8 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     oldArticleCount: 0,
     articleCount: 0,
     last: false,
-    loadArticleCount: async function () {
-      await scrape(this.url, this);
-      console.log(2);
+    loadArticleCount: function () {
+      scrape(this.url, this);
     },
     setArticleCount: function (count) {
       // добавить в объект новое количество фанфиков
@@ -54,7 +69,10 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
         count = this.articleCount;
       try {
         await collection.updateOne({ name: name }, { $set: { count: count } });
-        console.log(97);
+        if (this.last == true) {
+          client.close();
+          console.timeEnd("Конец работы");
+        }
       }
       catch (err) {
         console.log(`${err}`);
@@ -84,19 +102,13 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     }
 
     // Вызвать функцию loadArticleCount для каждого элемента созданного массива с объектами с задержкой      
-    for (let i = 0; i < 3; i++) {
-      //       setTimeout(function () {
-      await fanfics[i].loadArticleCount();
-      console.log(1);
-      //       }, 500 + (500 * i));
+    for (let i = 0; i < fanfics.length; i++) {
+      setTimeout(function () {
+        fanfics[i].loadArticleCount();
+      }, 500 + (500 * i));
     }
 
   } // end function readCollection    
 
-  await readCollection(); // вызвать функцию readCollection 
-  console.log(98989898989898);
-  await client.close();
-  console.log(99);
-  console.timeEnd("Конец работы");
-  console.log(100);
+  readCollection(); // вызвать функцию readCollection      
 });
