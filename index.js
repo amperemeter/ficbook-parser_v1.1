@@ -1,5 +1,4 @@
-const tress = require('tress'),
-  needle = require('needle'),
+const needle = require('needle'),
   cheerio = require('cheerio'),
   assert = require('assert'),
   MongoClient = require('mongodb').MongoClient,
