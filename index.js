@@ -14,6 +14,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   //   return new Promise(resolve => setTimeout(resolve, ms));
   // }
 
+  // Получить данные с сайта   
   async function scrape(link, fanficContext) {
     await needle('get', `${link}?p=1`)
       .then(async function (res) {
