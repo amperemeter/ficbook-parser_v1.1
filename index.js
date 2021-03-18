@@ -100,6 +100,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       fanfic.id = result[i]._id;
       fanfic.oldArticleCount = result[i].count;
       fanfic.last = result[i].last;
+      // запушить объекты в массив
       fanfics.push(fanfic);
     }
 
