@@ -1,1 +1,1 @@
-module.exports = 'mongodb+srv://<username>:<password>@<cluster>.xmsaf.mongodb.net/<database>?retryWrites=true&w=majority';
+module.exports = 'mongodb+srv://<usernkame>:<password>@<cluster>.xmsaf.mongodb.net/<database>?retryWrites=true&w=majority';
