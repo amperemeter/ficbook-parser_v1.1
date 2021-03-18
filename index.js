@@ -94,7 +94,6 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
     // Создать объекты с использованием данных из БД и добавить их в массив fanfics
     for (let i = 0; i < result.length; i++) {
-      // создать архив с объектами
       let fanfic = Object.assign({}, fanficObj);
       fanfic.url = result[i].url;
       fanfic.name = result[i].name;
