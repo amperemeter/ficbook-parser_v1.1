@@ -108,7 +108,6 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       await fanfics[i].loadArticleCount();
       // console.log(i + 1);
     }
-
   } // end function readCollection    
 
   await readCollection(); // вызвать функцию readCollection 
