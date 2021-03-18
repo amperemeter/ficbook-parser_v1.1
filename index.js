@@ -93,6 +93,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     // получить массив данных из БД
     const result = await collection.find({}).toArray(),
       fanfics = [];
+
     console.log(`Всего фэндомов: ${result.length}\n`);
     console.time("Конец работы");
 
