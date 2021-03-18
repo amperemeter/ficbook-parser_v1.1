@@ -117,6 +117,6 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   } // end function readCollection    
 
   await readCollection(); // вызвать функцию readCollection 
-  client.close();
-  console.timeEnd("Конец работы");
+  client.close(); // закрыть подключение с базой данных
+  console.timeEnd("Конец работы"); // посчитать время выполнения парсинга 
 });
