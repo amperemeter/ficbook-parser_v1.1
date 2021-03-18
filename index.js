@@ -84,13 +84,14 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
   //Создать массив с данными из БД     
   async function readCollection() {
+    // начать подсчет времени выполнения парсинга 
+    console.time("Конец работы");
+
     // получить массив данных из БД
     const result = await collection.find({}).toArray(),
       fanfics = [];
 
     console.log(`Всего фэндомов: ${result.length}\n`);
-    // начать подсчет времени выполнения парсинга 
-    console.time("Конец работы");
 
     // Создать объекты с использованием данных из БД и добавить их в массив fanfics
     for (let i = 0; i < result.length; i++) {
