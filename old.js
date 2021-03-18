@@ -10,6 +10,12 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, fu
   const collection = client.db('fanficsdb').collection('fanfics');
 
 
+  // Создать задержку
+  // function timeout(ms) {
+  //   return new Promise(resolve => setTimeout(resolve, ms));
+  // }
+  // await timeout(500); 
+
   // Получить данные с сайта    
   function scrape(link, fanficContext) {
     needle.get(`${link}?p=1`, function (err, res) {
