@@ -9,9 +9,10 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   assert.equal(null, err);
   const collection = client.db('fanficsdb').collection('fanfics');
 
-  function timeout(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  // Создать задержку
+  // function timeout(ms) {
+  //   return new Promise(resolve => setTimeout(resolve, ms));
+  // }
 
   async function scrape(link, fanficContext) {
     await needle('get', `${link}?p=1`)
