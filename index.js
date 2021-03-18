@@ -51,7 +51,6 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     url: '',
     oldArticleCount: 0,
     articleCount: 0,
-    last: false,
     loadArticleCount: async function () {
       await scrape(this.url, this);
     },
