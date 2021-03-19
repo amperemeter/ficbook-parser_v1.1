@@ -100,7 +100,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     }
   } // end fanficObj 
 
-  //Создать массив с данными из БД     
+  //Создать новый массив с данными из БД     
   async function readCollection() {
     // создать пустой массив
     const fanfics = [];
