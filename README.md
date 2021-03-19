@@ -13,4 +13,4 @@
 
 ## Хранение данных в Mongodb
 Данные можно хранить не в файле `data.json`, а в базе данных на удаленном сервисе. 
-Более продвинутые пользователи могут воспользоваться следующей инструкцией: [README-MONGODB](https://github.com/amperemeter/ficbook-parser_v2.0/blob/main/mongodb/README-MONGODB.md)
+Более продвинутые пользователи могут воспользоваться следующей инструкцией: [README-MONGODB](/mongodb/README-MONGODB.md)
