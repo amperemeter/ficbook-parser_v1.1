@@ -12,7 +12,7 @@
 6. Создать юзера со всеми правами.
 7. Создать в `fanfics` объекты c названием нужного вам фэндома, ссылкой на него и количеством фанфиков в значении 0. ID создается автоматически. Выглядеть должно так: `{ "_id": {"$oid": "5fbd52194c8f4b6314d6b5e1"}, "name": "Гарри Поттер", "url": "https://ficbook.net/fanfiction/books/harri_potter", "count": 0 }`
 ![Image alt](https://github.com/amperemeter/ficbook-parser_v2.0/blob/main/other/databases_example.png)
-#### Подключить базу данных
+#### Подключиться к базе данных
 8. Заменить в файле `index.js` строку 6 `[uri = require('./uri');]` на строку `[uri = 'mongodb+srv://<username>:<password>@<clustername>.xmsaf.mongodb.net/fanficsdb?retryWrites=true&w=majority];` 
 9. В этой же строке необходимо поменять значения `[username]`, `[password]`, `[clustername]` на ваши значения.
 #### Запустить парсер 
