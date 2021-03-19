@@ -9,5 +9,4 @@ logs
 
 # Игнорирование файлов 
 package-lock.json
-README.md
 uri.js

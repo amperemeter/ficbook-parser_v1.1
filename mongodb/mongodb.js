@@ -2,7 +2,7 @@ const needle = require('needle'),
   cheerio = require('cheerio'),
   assert = require('assert'),
   MongoClient = require('mongodb').MongoClient,
-  uri = require('../uri');
+  uri = require('../mongodb/uri');
 
 MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, async function (err, client) {
   assert.equal(null, err);
