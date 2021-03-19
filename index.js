@@ -1,13 +1,13 @@
 const needle = require('needle'),
   cheerio = require('cheerio'),
   fs = require('file-system'),
-  result = require('./data'),
+  result = require('./fanfics'),
   newResult = [];
 
 // Начать подсчет времени выполнения парсинга 
 console.time("Конец работы");
 
-// Вывести в консоль кол-во фанфиков в data.json
+// Вывести в консоль кол-во фанфиков в fanfics.json
 console.log(`Всего фэндомов: ${result.length}\n`);
 
 
@@ -92,11 +92,11 @@ console.log(`Всего фэндомов: ${result.length}\n`);
 
 
 
-  //Создать массив с данными из data.json 
+  //Создать массив с данными из fanfics.json 
   async function readCollection() {
     const fanfics = [];
 
-    // Создать объекты с использованием данных из data.json и добавить их в массив fanfics
+    // Создать объекты с использованием данных из fanfics.json и добавить их в массив fanfics
     for (let i = 0; i < result.length; i++) {
       let fanfic = Object.assign({}, fanficObj);
       fanfic.url = result[i].url;
@@ -115,7 +115,7 @@ console.log(`Всего фэндомов: ${result.length}\n`);
 
 
   await readCollection(); // вызвать функцию readCollection 
-  await fs.writeFileSync('./data.json', JSON.stringify(newResult, null, 2)); // записать новые данные в data.json
+  await fs.writeFileSync('./fanfics.json', JSON.stringify(newResult, null, 2)); // записать новые данные в fanfics.json
   console.timeEnd("Конец работы"); // завершить подсчет времени выполнения парсинга 
 
 
