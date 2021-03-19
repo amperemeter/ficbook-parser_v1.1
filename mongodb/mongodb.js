@@ -6,7 +6,18 @@ const needle = require('needle'),
 
 MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, async function (err, client) {
   assert.equal(null, err);
+
+  // Получить данные из БД
   const collection = client.db('fanficsdb').collection('fanfics');
+
+  // Создать массив данных из БД
+  const result = await collection.find({}).toArray()
+
+  // Вывести в консоль кол-во фанфиков в БД
+  console.log(`Всего фэндомов: ${result.length}\n`);
+
+  // Начать подсчет времени выполнения парсинга 
+  console.time("Конец работы");
 
   // Получить данные с сайта   
   async function scrape(link, fanficContext) {
@@ -86,16 +97,10 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
   //Создать массив с данными из БД     
   async function readCollection() {
-    // начать подсчет времени выполнения парсинга 
-    console.time("Конец работы");
+    // создать пустой массив
+    const fanfics = [];
 
-    // получить массив данных из БД
-    const result = await collection.find({}).toArray(),
-      fanfics = [];
-
-    console.log(`Всего фэндомов: ${result.length}\n`);
-
-    // Создать объекты с использованием данных из БД и добавить их в массив fanfics
+    // создать объекты с использованием данных из БД и добавить их в массив fanfics
     for (let i = 0; i < result.length; i++) {
       let fanfic = Object.assign({}, fanficObj);
       fanfic.url = result[i].url;
@@ -105,7 +110,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       fanfics.push(fanfic);
     }
 
-    // Вызвать функцию loadArticleCount для каждого объекта из созданного массива      
+    // вызвать функцию loadArticleCount для каждого объекта из созданного массива      
     for (let i = 0; i < fanfics.length; i++) {
       await fanfics[i].loadArticleCount();
       // console.log(i + 1);

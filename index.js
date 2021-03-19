@@ -4,18 +4,13 @@ const needle = require('needle'),
   result = require('./fanfics'),
   newResult = [];
 
-// Начать подсчет времени выполнения парсинга 
-console.time("Конец работы");
-
 // Вывести в консоль кол-во фанфиков в fanfics.json
 console.log(`Всего фэндомов: ${result.length}\n`);
 
-
+// Начать подсчет времени выполнения парсинга 
+console.time("Конец работы");
 
 (async () => {
-
-
-
   // Получить данные с ficbook   
   async function scrape(link, fanficContext) {
 
@@ -49,8 +44,6 @@ console.log(`Всего фэндомов: ${result.length}\n`);
       });
 
   } // end function scrape
-
-
 
   // Рабочий объект  
   let fanficObj = {
@@ -90,13 +83,12 @@ console.log(`Всего фэндомов: ${result.length}\n`);
     }
   } // end fanficObj 
 
-
-
   //Создать массив с данными из fanfics.json 
   async function readCollection() {
+    // создать пустой массив
     const fanfics = [];
 
-    // Создать объекты с использованием данных из fanfics.json и добавить их в массив fanfics
+    // создать объекты с использованием данных из fanfics.json и добавить их в массив fanfics
     for (let i = 0; i < result.length; i++) {
       let fanfic = Object.assign({}, fanficObj);
       fanfic.url = result[i].url;
@@ -105,19 +97,13 @@ console.log(`Всего фэндомов: ${result.length}\n`);
       fanfics.push(fanfic);
     }
 
-    // Вызвать функцию loadArticleCount для каждого объекта из созданного массива      
+    // вызвать функцию loadArticleCount для каждого объекта из созданного массива      
     for (let i = 0; i < fanfics.length; i++) {
       await fanfics[i].loadArticleCount();
-      // console.log(i + 1);
     }
   } // end function readCollection  
-
-
 
   await readCollection(); // вызвать функцию readCollection 
   await fs.writeFileSync('./fanfics.json', JSON.stringify(newResult, null, 2)); // записать новые данные в fanfics.json
   console.timeEnd("Конец работы"); // завершить подсчет времени выполнения парсинга 
-
-
-
 })();
