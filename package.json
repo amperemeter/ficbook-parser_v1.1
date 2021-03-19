@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node mongodb/mongo.js.js",
-    "watch": "nodemon mongodb/mongo.js",
+    "start": "node mongodb/mongodb.js",
+    "watch": "nodemon mongodb/mongodb.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
