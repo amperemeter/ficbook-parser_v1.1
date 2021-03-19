@@ -4,6 +4,11 @@ const needle = require('needle'),
   MongoClient = require('mongodb').MongoClient,
   uri = require('./uri');
 
+//  Создать задержку
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, async function (err, client) {
   assert.equal(null, err);
 
@@ -113,6 +118,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     // вызвать функцию loadArticleCount для каждого объекта из созданного массива      
     for (let i = 0; i < fanfics.length; i++) {
       await fanfics[i].loadArticleCount();
+      await timeout(500); // здержка
       // console.log(i + 1);
     }
   } // end function readCollection    

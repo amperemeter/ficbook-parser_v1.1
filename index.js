@@ -4,6 +4,11 @@ const needle = require('needle'),
   result = require('./fanfics'),
   newResult = [];
 
+//  Создать задержку
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Вывести в консоль кол-во фанфиков в fanfics.json
 console.log(`Всего фэндомов: ${result.length}\n`);
 
@@ -100,6 +105,7 @@ console.time("Конец работы");
     // вызвать функцию loadArticleCount для каждого объекта из созданного массива      
     for (let i = 0; i < fanfics.length; i++) {
       await fanfics[i].loadArticleCount();
+      await timeout(500); // здержка
     }
   } // end function readCollection  
 
