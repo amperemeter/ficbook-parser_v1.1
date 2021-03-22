@@ -94,7 +94,8 @@ console.time("Конец работы");
     const fanfics = [];
 
     // создать объекты с использованием данных из fanfics.json и добавить их в массив fanfics
-    for (let i = 0; i < result.length; i++) {
+    const resultLength = result.length;
+    for (let i = 0; i < resultLength; i++) {
       let fanfic = Object.assign({}, fanficObj);
       fanfic.url = result[i].url;
       fanfic.name = result[i].name;
@@ -103,8 +104,8 @@ console.time("Конец работы");
     }
 
     // вызвать функцию loadArticleCount для каждого объекта из созданного массива      
-    for (let i = 0; i < fanfics.length; i++) {
-      await fanfics[i].loadArticleCount();
+    for (let fanfic of fanfics) {
+      await fanfic.loadArticleCount();
       await timeout(500); // задержка
     }
   } // end function readCollection  

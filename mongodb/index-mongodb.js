@@ -106,7 +106,8 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     const fanfics = [];
 
     // создать объекты с использованием данных из БД и добавить их в массив fanfics
-    for (let i = 0; i < result.length; i++) {
+    const resultLength = result.length;
+    for (let i = 0; i < resultLength; i++) {
       let fanfic = Object.assign({}, fanficObj);
       fanfic.url = result[i].url;
       fanfic.name = result[i].name;
@@ -115,11 +116,20 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       fanfics.push(fanfic);
     }
 
-    // вызвать функцию loadArticleCount для каждого объекта из нового массива      
-    for (let i = 0; i < fanfics.length; i++) {
-      await fanfics[i].loadArticleCount();
+    // вызвать функцию loadArticleCount для каждого объекта из нового массива   
+    // let i = 0;
+    // await Promise.all(fanfics.map(async (item) => {
+    //   await item.loadArticleCount();
+    //   await timeout(500); 
+    //   console.log(i + 1);
+    // }));
+
+    // вызвать функцию loadArticleCount для каждого объекта из нового массива   
+    let i = 0;
+    for (let fanfic of fanfics) {
+      await fanfic.loadArticleCount();
       await timeout(500); // задержка
-      // console.log(i + 1);
+      console.log(++i);
     }
   } // end function readCollection    
 
