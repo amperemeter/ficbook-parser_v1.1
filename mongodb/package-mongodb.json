@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "author": "amperemeter",
   "scripts": {
     "start": "node index.js",
     "watch": "nodemon index.js",
