@@ -8,6 +8,7 @@
     "watch": "nodemon mongodb/index-mongodb.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "amperemeter",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "file-system": "^2.2.2",
