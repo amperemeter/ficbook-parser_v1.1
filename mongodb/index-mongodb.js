@@ -117,11 +117,10 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     }
 
     // вызвать функцию loadArticleCount для каждого объекта из нового массива   
-    let i = 0;
     for (let fanfic of fanfics) {
       await fanfic.loadArticleCount();
       await timeout(500); // задержка
-      // console.log(++i);
+      // console.log(0);
     }
   } // end function readCollection    
 
