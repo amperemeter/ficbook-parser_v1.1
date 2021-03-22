@@ -106,7 +106,7 @@ console.time("Конец работы");
     // вызвать функцию loadArticleCount для каждого объекта из созданного массива      
     for (let fanfic of fanfics) {
       await fanfic.loadArticleCount();
-      await timeout(1000); // задержка
+      await timeout(500); // задержка
     }
   } // end function readCollection  
 
