@@ -16,10 +16,10 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   const collection = client.db('fanficsdb').collection('fanfics');
 
   // Создать массив данных из БД
-  const result = await collection.find({}).toArray()
+  const fanficsArr = await collection.find({}).toArray()
 
   // Вывести в консоль кол-во фанфиков в БД
-  console.log(`Всего фэндомов: ${result.length}\n`);
+  console.log(`Всего фэндомов: ${fanficsArr.length}\n`);
 
   // Начать подсчет времени выполнения парсинга 
   console.time("Конец работы");
@@ -57,7 +57,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   } // end function scrape
 
   // Рабочий объект  
-  let fanficObj = {
+  let fanficProto = {
     id: '',
     name: '',
     url: '',
@@ -98,29 +98,28 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
         }
       }
     }
-  } // end fanficObj 
+  } // end fanficProto 
 
   //Создать новый массив с данными из БД     
   async function readCollection() {
     // создать пустой массив
-    const fanfics = [];
+    const fanficsArrCopy = [];
 
-    // создать объекты с использованием данных из БД и добавить их в массив fanfics
-    const resultLength = result.length;
-    for (let i = 0; i < resultLength; i++) {
-      let fanfic = Object.assign({}, fanficObj);
-      fanfic.url = result[i].url;
-      fanfic.name = result[i].name;
-      fanfic.id = result[i]._id;
-      fanfic.oldArticleCount = result[i].count;
-      fanfics.push(fanfic);
+    // создать объекты с использованием данных из БД и добавить их в массив fanficsArrCopy
+    for (let fanficsItem of fanficsArr) {
+      let fanficObj = Object.assign({}, fanficProto);
+      fanficObj.url = fanficsItem.url;
+      fanficObj.name = fanficsItem.name;
+      fanficObj.id = fanficsItem._id;
+      fanficObj.oldArticleCount = fanficsItem.count;
+      fanficsArrCopy.push(fanficObj);
     }
 
     // вызвать функцию loadArticleCount для каждого объекта из нового массива   
-    for (let fanfic of fanfics) {
-      await fanfic.loadArticleCount();
+    for (let i = 0; i < fanficsArrCopy.length; i++) {
+      await fanficsArrCopy[i].loadArticleCount();
       await timeout(500); // задержка
-      // console.log(0);
+      // console.log(i + 1);
     }
   } // end function readCollection    
 
