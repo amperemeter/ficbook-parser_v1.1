@@ -19,7 +19,8 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   const fanficsArr = await collection.find({}).toArray()
 
   // Вывести в консоль кол-во фанфиков в БД
-  console.log(`Всего фэндомов: ${fanficsArr.length}\n`);
+  const fanficsLength = fanficsArr.length;
+  console.log(`Всего фэндомов: ${fanficsLength}\n`);
 
   // Начать подсчет времени выполнения парсинга 
   console.time("Конец работы");
@@ -116,7 +117,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     }
 
     // вызвать функцию loadArticleCount для каждого объекта из нового массива   
-    for (let i = 0; i < fanficsArrCopy.length; i++) {
+    for (let i = 0; i < fanficsLength; i++) {
       await fanficsArrCopy[i].loadArticleCount();
       await timeout(500); // задержка
       // console.log(i + 1);
