@@ -27,20 +27,19 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
   // Получить данные с сайта   
   async function scrape(link, fanficContext) {
-    const urlOuter = `${link}&find=Найти!&p=1#result`;
-    const encodedUrlOuter = encodeURI(urlOuter);
+    const urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result`;
+    // encodedUrlOuter = encodeURI('Алексей+Анатольевич+Навальный');
 
-    await needle('get', encodedUrlOuter)
+    await needle('get', urlOuter)
       .then(async function (res, err) {
         // вычислить количество страниц на странице фэндома
         if (err) throw err;
         let $ = cheerio.load(res.body),
           page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
-        const urlInner = `${link}&find=Найти!&p=${page}#result`;
-        const encodedUrlInner = encodeURI(urlInner);
+        const urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`;
 
-        await needle('get', encodedUrlInner)
+        await needle('get', urlInner)
           .then(async function (res, err) {
             // вычислить количество фанфиков на всех страницах
             if (err) throw err;
@@ -133,3 +132,5 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   client.close(); // закрыть подключение с БД
   console.timeEnd("Конец работы"); // завершить подсчет времени выполнения парсинга 
 });
+
+
