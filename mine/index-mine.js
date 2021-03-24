@@ -29,7 +29,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   async function scrape(link, fanficContext) {
     // console.log(`${link}&find=Найти!&p=1#result`);
     const urlOuter = `${link}&find=Найти!&p=1#result`;
-    const encodedUrlOuter = encodeURI(urlOuter).replace(/%5B/g, '[').replace(/%5D/g, ']');
+    const encodedUrlOuter = encodeURI(urlOuter);
     await needle('get', encodedUrlOuter)
       .then(async function (res, err) {
         // вычислить количество страниц на странице фэндома
@@ -38,7 +38,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
           page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
         const urlInner = `${link}&find=Найти!&p=${page}#result`;
-        const encodedUrlInner = encodeURI(urlInner).replace(/%5B/g, '[').replace(/%5D/g, ']');
+        const encodedUrlInner = encodeURI(urlInner);
 
         await needle('get', encodedUrlInner)
           .then(async function (res, err) {
