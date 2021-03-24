@@ -115,7 +115,7 @@ console.time("Конец работы");
     await fs.writeFileSync('./fanfics.json', JSON.stringify(newFanficsArr, null, 2)); // записать новые данные в fanfics.json
   }
   else {
-    console.log("Ошибка. Данные не могут быть сохранены.");
+    console.log("Ошибка. Данные не могут быть сохранены");
   }
   console.timeEnd("Конец работы"); // завершить подсчет времени выполнения парсинга 
 })();
