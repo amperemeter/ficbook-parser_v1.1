@@ -12,11 +12,9 @@ function timeout(ms) {
 MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, async function (err, client) {
   assert.equal(null, err);
 
-  // Получить данные из БД
-  const collection = client.db('fanficsdb').collection('fanfics-test');
-
-  // Создать массив данных из БД
-  const fanficsArr = await collection.find({}).toArray()
+  // Получить данные из БД и создать массив данных
+  const collection = client.db('fanficsdb').collection('fanfics-test'),
+    fanficsArr = await collection.find({}).toArray()
 
   // Вывести в консоль кол-во фанфиков в БД
   const fanficsLength = fanficsArr.length;
@@ -28,7 +26,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   // Получить данные с сайта   
   async function scrape(fanficContext, link) {
     // проверить, к какому типу относится ссылка
-    let linkFilter = link.includes('fandom_filter');
+    const linkFilter = link.includes('fandom_filter');
     // дополнить ссылку со страницы фильтра необходимыми параметрами
     const urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result`;
     // кодировать кириллицу
@@ -49,7 +47,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
             if (err) throw err;
             $ = cheerio.load(res.body);
             // проверить наличие блока с "горячими работами"
-            let blockSeparator = $(".fanfic-thumb-block").next($(".block-separator")).length;
+            const blockSeparator = $(".fanfic-thumb-block").next($(".block-separator")).length;
             // вычислить количество фанфиков на последней странице
             let articles;
             if (linkFilter && blockSeparator) {
