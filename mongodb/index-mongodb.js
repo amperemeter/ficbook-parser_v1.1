@@ -27,9 +27,6 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
   // Получить данные с сайта   
   async function scrape(fanficContext, link) {
-    if (link.includes('pairings')) {
-      console.log(`${fanficContext.name}\n${link}\n`);
-    }
     await needle('get', `${link}?p=1`)
       .then(async function (res, err) {
         // вычислить количество страниц на странице фэндома

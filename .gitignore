@@ -10,3 +10,4 @@ logs
 # Игнорирование файлов 
 package-lock.json
 uri.js
+data.txt
