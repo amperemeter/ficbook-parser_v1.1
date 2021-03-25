@@ -10,8 +10,8 @@
 4. Зарегистрироваться на сайте [cloud.mongodb.com](https://cloud.mongodb.com/) и создать новый кластер.
 5. Создать в кластере базу данных с названием `fanficsdb`, а внутри нее коллекцию с названием `fanfics`. 
 6. Создать юзера со всеми правами.
-7. Создать в `fanfics` объекты c названием нужного вам фэндома или пэринга, ссылкой на него и количеством фанфиков в значении 0. ID создается автоматически. 
-* Выглядеть должно так: `{ "_id": {"$oid": "5fbd52194c8f4b6314d6b5e1"}, "name": "Гарри Поттер", "url": "https://ficbook.net/fanfiction/books/harri_potter", "count": 0 }`. 
+7. Создать в `fanfics` объекты c названием нужного вам фэндома или пэринга, ссылкой на него и количеством фанфиков в значении 0. 
+* Выглядеть должно так: `{ "_id": {"$oid": "5fbd52194c8f4b6314d6b5e1"}, "name": "Гарри Поттер", "url": "https://ficbook.net/fanfiction/books/harri_potter", "count": 0 }`. ID создается автоматически. 
 * Если в ссылке имеется кириллица, она должна быть закодирована в кодировке UTF-8 . Например: `https://ficbook.net/pairings/%D0%9D%D1%83%D0%B0%D0%B4%D0%B0---%D0%9D%D1%83%D0%B0%D0%BB%D0%B0`). 
 #### Подключиться к базе данных
 8. Заменить в файле `index.js` строку `[uri = require('./uri');]` на строку `[uri = 'mongodb+srv://<username>:<password>@<clustername>.xmsaf.mongodb.net/fanficsdb?retryWrites=true&w=majority];` 
