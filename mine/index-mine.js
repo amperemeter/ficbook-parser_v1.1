@@ -27,10 +27,13 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
   // Получить данные с сайта   
   async function scrape(fanficContext, link) {
-
+    // проверить, к какому типу относится ссылка
     let linkFilter = link.includes('fandom_filter');
 
+    // дополнить ссылку со страницы фильтра необходимыми параметрами
     const urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result`;
+
+    // кодировать кириллицу
     // encodedUrlOuter = encodeURI('Алексей+Анатольевич+Навальный');
 
     await needle('get', linkFilter ? urlOuter : `${link}?p=1`)
@@ -40,6 +43,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
         let $ = cheerio.load(res.body),
           page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
+        // дополнить ссылку со страницы фильтра необходимыми параметрами
         const urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`;
 
         await needle('get', linkFilter ? urlInner : `${link}?p=${page}`)
@@ -135,5 +139,3 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   client.close(); // закрыть подключение с БД
   console.timeEnd("Конец работы"); // завершить подсчет времени выполнения парсинга 
 });
-
-
