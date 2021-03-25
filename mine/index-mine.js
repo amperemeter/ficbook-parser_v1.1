@@ -125,7 +125,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     const fanficsArrCopy = [];
 
     // создать объекты с использованием данных из БД и добавить их в массив fanficsArrCopy
-    for (let fanficsItem of fanficsArr) {
+    for (const fanficsItem of fanficsArr) {
       const fanficObj = Object.assign({}, fanficProto);
       fanficObj.id = fanficsItem._id;
       fanficObj.name = fanficsItem.name;
