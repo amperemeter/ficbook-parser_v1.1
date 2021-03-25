@@ -16,20 +16,19 @@ console.log(`Всего фэндомов: ${fanficsArr.length}\n`);
 console.time("Конец работы");
 
 (async () => {
-  // Получить данные с ficbook   
+  // Получить данные с сайта   
   async function scrape(fanficContext, link) {
-
     await needle('get', `${link}?p=1`)
-      // вычислить количество страниц на странице фэндома
       .then(async function (res, err) {
+        // вычислить количество страниц на странице фэндома
         if (err) throw err;
         let $ = cheerio.load(res.body),
           page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
 
         await needle('get', `${link}?p=${page}`)
-          // вычислить количество фанфиков на всех страницах
           .then(async function (res, err) {
+            // вычислить количество фанфиков на всех страницах
             if (err) throw err;
             $ = cheerio.load(res.body);
             let articles = $(".fanfic-thumb-block:last-of-type .fanfic-inline").length;
