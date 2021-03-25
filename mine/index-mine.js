@@ -29,17 +29,15 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   async function scrape(fanficContext, link) {
     // проверить, к какому типу относится ссылка
     let linkFilter = link.includes('fandom_filter');
-
     // дополнить ссылку со страницы фильтра необходимыми параметрами
     const urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result`;
-
     // кодировать кириллицу
     // encodedUrlOuter = encodeURI('Алексей+Анатольевич+Навальный');
 
     await needle('get', linkFilter ? urlOuter : `${link}?p=1`)
       .then(async function (res, err) {
-        // вычислить количество страниц на странице фэндома
         if (err) throw err;
+        // вычислить количество страниц на странице фэндома
         let $ = cheerio.load(res.body),
           page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
@@ -48,10 +46,20 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
         await needle('get', linkFilter ? urlInner : `${link}?p=${page}`)
           .then(async function (res, err) {
-            // вычислить количество фанфиков на всех страницах
             if (err) throw err;
             $ = cheerio.load(res.body);
-            let articles = $(".fanfic-thumb-block article:not(.fanfic-inline-not)").length;
+            // проверить наличие блока с "горячими работами"
+            let blockSeparator = $(".fanfic-thumb-block").next($(".block-separator")).length;
+            // вычислить количество фанфиков на последней странице
+            let articles;
+            if (linkFilter && blockSeparator) {
+              articles = $(".fanfic-thumb-block").next($(".block-separator")).nextAll($(".fanfic-thumb-block")).length;
+            } else if (linkFilter && !blockSeparator) {
+              articles = $(".fanfic-thumb-block").length;
+            } else {
+              articles = $(".fanfic-thumb-block:last-of-type .fanfic-inline").length;
+            }
+            // вычислить количество фанфиков на всех страницах
             if (page != 1) {
               articles = (page - 1) * 20 + articles;
             }
@@ -87,12 +95,15 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       return this.articleCount - this.oldArticleCount;
     },
     checkIsNew: function () {
-      // вывести после сравнения количество добавленных фанфиков  
       let difference = this.hasNew();
-      if (difference > 0) {
+      // проверить, к какому типу относится ссылка
+      let linkFilter = this.url.includes('fandom_filter');
+      // вывести после сравнения количество добавленных фанфиков  
+      if (difference > 0 && linkFilter) {
+        console.log(`${this.name}\nновых ${difference}\n${this.url}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result\n`);
+      } else if (difference > 0 && !linkFilter) {
         console.log(`${this.name}\nновых ${difference}\n${this.url}\n`);
-      }
-      if (difference < 0) {
+      } else if (difference < 0) {
         console.log(`${this.name}\nудалено ${difference}\n`);
       }
     },
@@ -100,10 +111,8 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       // сохранить новое кол-во фанфиков в БД
       let difference = this.hasNew();
       if (difference !== 0) {
-        const name = this.name,
-          count = this.articleCount;
         try {
-          await collection.updateOne({ name: name }, { $set: { count: count } });
+          await collection.updateOne({ url: this.url }, { $set: { count: this.articleCount } });
         }
         catch (err) {
           console.log(`${err}`);

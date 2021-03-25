@@ -80,8 +80,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       let difference = this.hasNew();
       if (difference > 0) {
         console.log(`${this.name}\nновых ${difference}\n${this.url}\n`);
-      }
-      if (difference < 0) {
+      } else if (difference < 0) {
         console.log(`${this.name}\nудалено ${difference}\n`);
       }
     },
@@ -89,10 +88,8 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       // сохранить новое кол-во фанфиков в БД
       let difference = this.hasNew();
       if (difference !== 0) {
-        const name = this.name,
-          count = this.articleCount;
         try {
-          await collection.updateOne({ name: name }, { $set: { count: count } });
+          await collection.updateOne({ url: this.url }, { $set: { count: this.articleCount } });
         }
         catch (err) {
           console.log(`${err}`);

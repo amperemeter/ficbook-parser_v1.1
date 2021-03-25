@@ -72,8 +72,7 @@ console.time("Конец работы");
       let difference = this.hasNew();
       if (difference > 0) {
         console.log(`${this.name}\nновых ${difference}\n${this.url}\n`);
-      }
-      if (difference < 0) {
+      } else if (difference < 0) {
         console.log(`${this.name}\nудалено ${difference}\n`);
       }
     },
