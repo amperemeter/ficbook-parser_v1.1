@@ -75,7 +75,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   } // end function scrape
 
   // Рабочий объект  
-  let fanficProto = {
+  const fanficProto = {
     id: '',
     name: '',
     url: '',
@@ -93,9 +93,9 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       return this.articleCount - this.oldArticleCount;
     },
     checkIsNew: function () {
-      let difference = this.hasNew();
+      const difference = this.hasNew();
       // проверить, к какому типу относится ссылка
-      let linkFilter = this.url.includes('fandom_filter');
+      const linkFilter = this.url.includes('fandom_filter');
       // вывести после сравнения количество добавленных фанфиков  
       if (difference > 0 && linkFilter) {
         console.log(`${this.name}\nновых ${difference}\n${this.url}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result\n`);
@@ -107,7 +107,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     },
     saveCount: async function () {
       // сохранить новое кол-во фанфиков в БД
-      let difference = this.hasNew();
+      const difference = this.hasNew();
       if (difference !== 0) {
         try {
           await collection.updateOne({ url: this.url }, { $set: { count: this.articleCount } });
@@ -126,7 +126,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
 
     // создать объекты с использованием данных из БД и добавить их в массив fanficsArrCopy
     for (let fanficsItem of fanficsArr) {
-      let fanficObj = Object.assign({}, fanficProto);
+      const fanficObj = Object.assign({}, fanficProto);
       fanficObj.id = fanficsItem._id;
       fanficObj.name = fanficsItem.name;
       fanficObj.url = fanficsItem.url;
