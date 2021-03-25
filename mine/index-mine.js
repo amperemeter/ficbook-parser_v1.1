@@ -26,11 +26,14 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   console.time("Конец работы");
 
   // Получить данные с сайта   
-  async function scrape(link, fanficContext) {
+  async function scrape(fanficContext, link) {
+
+    let linkFilter = link.includes('fandom_filter');
+
     const urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result`;
     // encodedUrlOuter = encodeURI('Алексей+Анатольевич+Навальный');
 
-    await needle('get', urlOuter)
+    await needle('get', linkFilter ? urlOuter : `${link}?p=1`)
       .then(async function (res, err) {
         // вычислить количество страниц на странице фэндома
         if (err) throw err;
@@ -39,12 +42,12 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
         page = page ? page : 1;
         const urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`;
 
-        await needle('get', urlInner)
+        await needle('get', linkFilter ? urlInner : `${link}?p=${page}`)
           .then(async function (res, err) {
             // вычислить количество фанфиков на всех страницах
             if (err) throw err;
             $ = cheerio.load(res.body);
-            let articles = $(".fanfic-thumb-block").length;
+            let articles = $(".fanfic-thumb-block article:not(.fanfic-inline-not)").length;
             if (page != 1) {
               articles = (page - 1) * 20 + articles;
             }
@@ -69,7 +72,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     oldArticleCount: 0,
     articleCount: 0,
     loadArticleCount: async function () {
-      await scrape(this.url, this);
+      await scrape(this, this.url);
     },
     setArticleCount: function (count) {
       // добавить в объект новое количество фанфиков
@@ -113,9 +116,9 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     // создать объекты с использованием данных из БД и добавить их в массив fanficsArrCopy
     for (let fanficsItem of fanficsArr) {
       let fanficObj = Object.assign({}, fanficProto);
-      fanficObj.url = fanficsItem.url;
-      fanficObj.name = fanficsItem.name;
       fanficObj.id = fanficsItem._id;
+      fanficObj.name = fanficsItem.name;
+      fanficObj.url = fanficsItem.url;
       fanficObj.oldArticleCount = fanficsItem.count;
       fanficsArrCopy.push(fanficObj);
     }

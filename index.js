@@ -17,7 +17,7 @@ console.time("Конец работы");
 
 (async () => {
   // Получить данные с ficbook   
-  async function scrape(link, fanficContext) {
+  async function scrape(fanficContext, link) {
 
     await needle('get', `${link}?p=1`)
       // вычислить количество страниц на странице фэндома
@@ -57,7 +57,7 @@ console.time("Конец работы");
     oldArticleCount: 0,
     articleCount: 0,
     loadArticleCount: async function () {
-      await scrape(this.url, this);
+      await scrape(this, this.url);
     },
     setArticleCount: function (count) {
       // добавить в объект новое количество фанфиков
@@ -96,8 +96,8 @@ console.time("Конец работы");
     // создать объекты с использованием данных из fanfics.json и добавить их в массив fanficsArrCopy
     for (let fanficsItem of fanficsArr) {
       let fanficObj = Object.assign({}, fanficProto);
-      fanficObj.url = fanficsItem.url;
       fanficObj.name = fanficsItem.name;
+      fanficObj.url = fanficsItem.url;
       fanficObj.oldArticleCount = fanficsItem.count;
       fanficsArrCopy.push(fanficObj);
     }

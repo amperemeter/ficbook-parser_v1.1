@@ -26,7 +26,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   console.time("Конец работы");
 
   // Получить данные с сайта   
-  async function scrape(link, fanficContext) {
+  async function scrape(fanficContext, link) {
     await needle('get', `${link}?p=1`)
       .then(async function (res, err) {
         // вычислить количество страниц на странице фэндома
@@ -65,7 +65,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     oldArticleCount: 0,
     articleCount: 0,
     loadArticleCount: async function () {
-      await scrape(this.url, this);
+      await scrape(this, this.url);
     },
     setArticleCount: function (count) {
       // добавить в объект новое количество фанфиков
@@ -109,9 +109,9 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     // создать объекты с использованием данных из БД и добавить их в массив fanficsArrCopy
     for (let fanficsItem of fanficsArr) {
       let fanficObj = Object.assign({}, fanficProto);
-      fanficObj.url = fanficsItem.url;
-      fanficObj.name = fanficsItem.name;
       fanficObj.id = fanficsItem._id;
+      fanficObj.name = fanficsItem.name;
+      fanficObj.url = fanficsItem.url;
       fanficObj.oldArticleCount = fanficsItem.count;
       fanficsArrCopy.push(fanficObj);
     }
