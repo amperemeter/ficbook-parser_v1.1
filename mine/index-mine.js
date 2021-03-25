@@ -54,7 +54,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
             let articles;
             if (linkFilter && blockSeparator) {
               articles = $(".fanfic-thumb-block").next($(".block-separator")).nextAll($(".fanfic-thumb-block")).length;
-            } else if (linkFilter && !blockSeparator) {
+            } else if (linkFilter) {
               articles = $(".fanfic-thumb-block").length;
             } else {
               articles = $(".fanfic-thumb-block:last-of-type .fanfic-inline").length;
@@ -101,7 +101,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
       // вывести после сравнения количество добавленных фанфиков  
       if (difference > 0 && linkFilter) {
         console.log(`${this.name}\nновых ${difference}\n${this.url}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result\n`);
-      } else if (difference > 0 && !linkFilter) {
+      } else if (difference > 0) {
         console.log(`${this.name}\nновых ${difference}\n${this.url}\n`);
       } else if (difference < 0) {
         console.log(`${this.name}\nудалено ${difference}\n`);
