@@ -51,7 +51,7 @@ console.time("Конец работы");
   } // end function scrape
 
   // Рабочий объект  
-  let fanficProto = {
+  const fanficProto = {
     name: '',
     url: '',
     oldArticleCount: 0,
@@ -69,7 +69,7 @@ console.time("Конец работы");
     },
     checkIsNew: function () {
       // вывести после сравнения количество добавленных фанфиков  
-      let difference = this.hasNew();
+      const difference = this.hasNew();
       if (difference > 0) {
         console.log(`${this.name}\nновых ${difference}\n${this.url}\n`);
       } else if (difference < 0) {
@@ -78,7 +78,7 @@ console.time("Конец работы");
     },
     putData: async function () {
       // cоздать объект с новыми данными и добавить их в массив newFanficsArr
-      let newFanficsObject = new Object({
+      const newFanficsObject = new Object({
         "name": this.name,
         "url": this.url,
         "count": this.articleCount
@@ -93,8 +93,8 @@ console.time("Конец работы");
     const fanficsArrCopy = [];
 
     // создать объекты с использованием данных из fanfics.json и добавить их в массив fanficsArrCopy
-    for (let fanficsItem of fanficsArr) {
-      let fanficObj = Object.assign({}, fanficProto);
+    for (const fanficsItem of fanficsArr) {
+      const fanficObj = Object.assign({}, fanficProto);
       fanficObj.name = fanficsItem.name;
       fanficObj.url = fanficsItem.url;
       fanficObj.oldArticleCount = fanficsItem.count;
@@ -102,7 +102,7 @@ console.time("Конец работы");
     }
 
     // вызвать функцию loadArticleCount для каждого объекта из созданного массива      
-    for (let fanficsItem of fanficsArrCopy) {
+    for (const fanficsItem of fanficsArrCopy) {
       await fanficsItem.loadArticleCount();
       await timeout(500); // задержка
     }
