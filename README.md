@@ -22,7 +22,7 @@
 Если вы хотите отслеживать появление работ с определенными параметрами, вы можете использовать ссылки со страницы фильтра. Но имейте в виду, что в фильтре выводится максимум 1000 работ.
 
 ### Требования к ссылке
-* В ней не должно быть кириллицы. Если вы выбираете в фильтре определенных персонажей, их имена должнв быть закодированы в кодировке UTF-8.
+* В ней не должно быть кириллицы. Если вы выбираете в фильтре определенных персонажей, их имена должны быть закодированы в кодировке UTF-8.
 * Параметр `&find=Найти!#result` в конце ссылки должен быть удален.
 * Примерный вид ссылки: `https://ficbook.net/find?fandom_filter=fandom&fandom_group_id=1&fandom_ids%5B%5D=157436&pairings%5B0%5D%5Bchars%5D%5B%5D=582348&pairings%5B0%5D%5Bpairing%5D=%D0%9A%D0%BE%D1%80%D0%BD%D0%B5%D0%BB%D0%B8%D1%83%D1%81+%D0%A5%D0%B8%D0%BA%D0%BA%D0%B8&sizes%5B%5D=1&sizes%5B%5D=2&sizes%5B%5D=3&sizes%5B%5D=4&pages_min=&pages_max=&ratings%5B%5D=5&ratings%5B%5D=6&ratings%5B%5D=7&ratings%5B%5D=8&ratings%5B%5D=9&directions%5B%5D=1&directions%5B%5D=2&directions%5B%5D=3&directions%5B%5D=4&directions%5B%5D=7&directions%5B%5D=6&directions%5B%5D=5&likes_min=&likes_max=&date_create_min=2021-03-25&date_create_max=2021-03-25&date_update_min=2021-03-25&date_update_max=2021-03-25&title=&rnd=65911466`
 
