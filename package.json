@@ -5,8 +5,8 @@
   "license": "MIT",
   "author": "amperemeter",
   "scripts": {
-    "start": "node mongodb/index-mongodb.js",
-    "watch": "nodemon mongodb/index-mongodb.js",
+    "start": "node filter/index-filter.js",
+    "watch": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

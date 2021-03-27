@@ -4,7 +4,7 @@ const needle = require('needle'),
   MongoClient = require('mongodb').MongoClient,
   uri = require('./uri');
 
-//  Создать задержку
+// Создать задержку
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -13,7 +13,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   assert.equal(null, err);
 
   // Получить данные из БД и создать массив данных
-  const collection = client.db('fanficsdb').collection('fanfics-test'),
+  const collection = client.db('fanficsdb').collection('fanfics'),
     fanficsArr = await collection.find({}).toArray()
 
   // Вывести в консоль кол-во фанфиков в БД
@@ -28,9 +28,10 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     // проверить, к какому типу относится ссылка
     const linkFilter = link.includes('fandom_filter');
     // дополнить ссылку со страницы фильтра необходимыми параметрами
-    const urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result`;
+    let urlOuter = '';
+    linkFilter && (urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=1#result`);
     // кодировать кириллицу
-    // encodedUrlOuter = encodeURI('Алексей+Анатольевич+Навальный');
+    // encodedUrlOuter = encodeURI('Корнелиус Хикки');
 
     await needle('get', linkFilter ? urlOuter : `${link}?p=1`)
       .then(async function (res, err) {
@@ -40,7 +41,8 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
           page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
         // дополнить ссылку со страницы фильтра необходимыми параметрами
-        const urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`;
+        let urlInner = '';
+        linkFilter && (urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`);
 
         await needle('get', linkFilter ? urlInner : `${link}?p=${page}`)
           .then(async function (res, err) {
