@@ -16,7 +16,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   const collection = client.db('fanficsdb').collection('fanfics');
 
   // Создать массив данных из БД
-  const fanficsArr = await collection.find({}).toArray()
+  const fanficsArr = await collection.find({}).toArray();
 
   // Вывести в консоль кол-во фанфиков в БД
   const fanficsLength = fanficsArr.length;
