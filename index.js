@@ -99,11 +99,11 @@ console.time("Конец работы");
     },
     putData: async function () {
       // cоздать объект с новыми данными и добавить их в массив newFanficsArr
-      const newFanficsObject = new Object({
+      const newFanficsObject = {
         "name": this.name,
         "url": this.url,
         "count": this.articleCount
-      });
+      };
       newFanficsArr.push(newFanficsObject);
     }
   } // end fanficProto 
