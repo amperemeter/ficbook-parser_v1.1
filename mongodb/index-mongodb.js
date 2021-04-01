@@ -83,18 +83,18 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
     url: '',
     oldArticleCount: 0,
     articleCount: 0,
-    loadArticleCount: async function () {
+    async loadArticleCount() {
       await scrape(this, this.url);
     },
-    setArticleCount: function (count) {
+    setArticleCount(count) {
       // добавить в объект новое количество фанфиков
       this.articleCount = count;
     },
-    hasNew: function () {
+    hasNew() {
       // сравнить новое и старое количество фанфиков
       return this.articleCount - this.oldArticleCount;
     },
-    checkIsNew: function () {
+    checkIsNew() {
       const difference = this.hasNew();
       // проверить, к какому типу относится ссылка
       const linkFilter = this.url.includes('fandom_filter');
@@ -107,7 +107,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
         console.log(`${this.name}\nудалено ${difference}\n`);
       }
     },
-    saveCount: async function () {
+    async saveCount() {
       // сохранить новое кол-во фанфиков в БД
       const difference = this.hasNew();
       if (difference !== 0) {

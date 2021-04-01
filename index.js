@@ -73,18 +73,18 @@ console.time("Конец работы");
     url: '',
     oldArticleCount: 0,
     articleCount: 0,
-    loadArticleCount: async function () {
+    async loadArticleCount() {
       await scrape(this, this.url);
     },
-    setArticleCount: function (count) {
+    setArticleCount(count) {
       // добавить в объект новое количество фанфиков
       this.articleCount = count;
     },
-    hasNew: function () {
+    hasNew() {
       // сравнить новое и старое количество фанфиков
       return this.articleCount - this.oldArticleCount;
     },
-    checkIsNew: function () {
+    checkIsNew() {
       const difference = this.hasNew();
       // проверить, к какому типу относится ссылка
       const linkFilter = this.url.includes('fandom_filter');
@@ -97,7 +97,7 @@ console.time("Конец работы");
         console.log(`${this.name}\nудалено ${difference}\n`);
       }
     },
-    putData: async function () {
+    async putData() {
       // cоздать объект с новыми данными и добавить их в массив newFanficsArr
       const newFanficsObject = {
         "name": this.name,
