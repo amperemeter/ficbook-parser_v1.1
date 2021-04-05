@@ -13,7 +13,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true, useNewUrlParser: true }, as
   assert.equal(null, err);
 
   // Получить данные из БД
-  const collection = client.db('fanficsdb').collection('fanfics');
+  const collection = client.db('fanficsdb').collection('fanfics-test');
 
   // Создать массив данных из БД
   const fanficsArr = await collection.find({}).toArray();

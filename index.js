@@ -18,15 +18,26 @@ console.time("Конец работы");
 (async () => {
   // Получить данные с сайта   
   async function scrape(fanficContext, link) {
+    let options = {
+      follow_max: 10,
+      follow_set_cookies: true,
+      follow_set_referer: true,
+      follow_keep_method: true,
+      follow_if_same_host: true,
+      follow_if_same_protocol: true,
+      follow_if_same_location: true,
+      user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 ',
+    }
     // проверить, к какому типу относится ссылка
     const linkFilter = link.includes('fandom_filter');
     // дополнить ссылку со страницы фильтра необходимыми параметрами
     let urlOuter;
     linkFilter && (urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!#result`);
 
-    await needle('get', linkFilter ? urlOuter : `${link}?p=1`)
+    await needle('get', linkFilter ? urlOuter : `${link}?p=1`, options)
       .then(async function (res, err) {
         if (err) throw err;
+        // console.log(res);
         // вычислить количество страниц на странице фэндома
         let $ = cheerio.load(res.body),
           page = $(".pagenav .paging-description b:last-of-type").html();
@@ -35,7 +46,7 @@ console.time("Конец работы");
         let urlInner;
         linkFilter && (urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`);
 
-        await needle('get', linkFilter ? urlInner : `${link}?p=${page}`)
+        await needle('get', linkFilter ? urlInner : `${link}?p=${page}`, options)
           .then(async function (res, err) {
             if (err) throw err;
             $ = cheerio.load(res.body);
