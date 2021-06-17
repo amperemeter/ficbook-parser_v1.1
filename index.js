@@ -18,37 +18,43 @@ console.time("Конец работы");
 (async () => {
   // Получить данные с сайта   
   async function scrape(fanficContext, link) {
-    let options = {
-      follow_max: 10,
-      follow_set_cookies: true,
-      follow_set_referer: true,
-      follow_keep_method: true,
-      follow_if_same_host: true,
-      follow_if_same_protocol: true,
-      follow_if_same_location: true,
-      user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 ',
-    }
     // проверить, к какому типу относится ссылка
     const linkFilter = link.includes('fandom_filter');
     // дополнить ссылку со страницы фильтра необходимыми параметрами
     let urlOuter;
     linkFilter && (urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!#result`);
 
-    await needle('get', linkFilter ? urlOuter : `${link}?p=1`, options)
+    // let options = {
+    //   follow_max: 10,
+    //   follow_set_cookies: true,
+    //   follow_set_referer: true,
+    //   follow_keep_method: true,
+    //   follow_if_same_host: true,
+    //   follow_if_same_protocol: true,
+    //   follow_if_same_location: true,
+    //   user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
+    // }
+
+    await needle.defaults({
+      user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
+      parse_response: false,
+    });
+
+    await needle('get', linkFilter ? urlOuter : `${link}?p=1`)
       .then(async function (res, err) {
         if (err) throw err;
 
-        // console.log(res);
-
         // вычислить количество страниц на странице фэндома
         let $ = cheerio.load(res.body),
+          //   page = $("#no-cookie-warning p").html();
+          // console.log(page);
           page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
         // дополнить ссылку со страницы фильтра необходимыми параметрами
         let urlInner;
         linkFilter && (urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`);
 
-        await needle('get', linkFilter ? urlInner : `${link}?p=${page}`, options)
+        await needle('get', linkFilter ? urlInner : `${link}?p=${page}`)
           .then(async function (res, err) {
             if (err) throw err;
             $ = cheerio.load(res.body);
@@ -127,11 +133,11 @@ console.time("Конец работы");
     const fanficsArrCopy = [];
 
     // создать объекты с использованием данных из fanfics.json и добавить их в массив fanficsArrCopy
-    for (const fanficsItem of fanficsArr) {
+    for (let i = 0; i < fanficsArr.length; i++) {
       const fanficObj = Object.assign({}, fanficProto);
-      fanficObj.name = fanficsItem.name;
-      fanficObj.url = fanficsItem.url;
-      fanficObj.oldArticleCount = fanficsItem.count;
+      fanficObj.name = fanficsArr[i].name;
+      fanficObj.url = fanficsArr[i].url;
+      fanficObj.oldArticleCount = fanficsArr[i].count;
       fanficsArrCopy.push(fanficObj);
     }
 
