@@ -37,7 +37,9 @@ console.time("Конец работы");
     await needle('get', linkFilter ? urlOuter : `${link}?p=1`, options)
       .then(async function (res, err) {
         if (err) throw err;
+
         // console.log(res);
+
         // вычислить количество страниц на странице фэндома
         let $ = cheerio.load(res.body),
           page = $(".pagenav .paging-description b:last-of-type").html();
@@ -70,11 +72,11 @@ console.time("Конец работы");
             await fanficContext.putData(); // добавить новые данные в массив newFanficsArr 
           })
           .catch(function (err) {
-            console.log('Needle inner error!')
+            console.log(`Needle inner error!\n ${err}`)
           });
       })
       .catch(function (err) {
-        console.log('Needle outer error!')
+        console.log(`Needle outer error!\n ${err}`)
       });
   } // end function scrape
 
