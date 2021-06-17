@@ -72,11 +72,11 @@ console.time("Конец работы");
             await fanficContext.putData(); // добавить новые данные в массив newFanficsArr 
           })
           .catch(function (err) {
-            console.log(`Needle inner error!\n ${err}`)
+            console.log(`Needle inner error!\n ${err}\n`)
           });
       })
       .catch(function (err) {
-        console.log(`Needle outer error!\n ${err}`)
+        console.log(`Needle outer error!\n ${err}\n`)
       });
   } // end function scrape
 
