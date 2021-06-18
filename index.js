@@ -1,8 +1,11 @@
 const needle = require('needle'),
   cheerio = require('cheerio'),
   fs = require('file-system'),
+  Nightmare = require('nightmare'),
+  nightmare = Nightmare({ show: true }),
   fanficsArr = require('./fanfics'),
   newFanficsArr = [];
+
 
 //  Создать задержку
 function timeout(ms) {
@@ -16,6 +19,34 @@ console.log(`Всего фэндомов: ${fanficsArr.length}\n`);
 console.time("Конец работы");
 
 (async () => {
+  let cookies = [];
+
+  // Получить cookies с сайта
+  async function getCookies(login, password) {
+    await nightmare
+      .goto('https://ficbook.net/')
+      .click('#jsLogin span')
+      .wait('.login-dropdown')
+      .type('form [name=login]', login)
+      .type('form [name=password]', password)
+      .click('form [name=do_login]')
+      .wait('.header-info')
+      .cookies.get()
+      .end()
+      .then(cookies => {
+        // console.log(cookies[0])
+        return cookies;
+      })
+      .catch(function (error) {
+        console.error('Authorization failed:', error);
+      });
+  }
+
+  // function getCookies(login, password) {
+  //   return [{ '__cf_bm': 'd2bffe3e1ed85903aa2ae7e1318f7e3c02156c17-1624018714-1800-AcOFNNZz4iTo+rAcFDEu2SOgybG8xBFhV6UyT6FCvXpnOLcnkoQMuy4GYFeATaauy1ze1nJhIlWD6dePncpPBXwHmSRDJxw10PZ0sHKG51ULA9jZfjvAtpMlIUUNQAzqmA==' }]
+  // }
+
+
   // Получить данные с сайта   
   async function scrape(fanficContext, link) {
     // проверить, к какому типу относится ссылка
@@ -24,37 +55,34 @@ console.time("Конец работы");
     let urlOuter;
     linkFilter && (urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!#result`);
 
-    // let options = {
-    //   follow_max: 10,
-    //   follow_set_cookies: true,
-    //   follow_set_referer: true,
-    //   follow_keep_method: true,
-    //   follow_if_same_host: true,
-    //   follow_if_same_protocol: true,
-    //   follow_if_same_location: true,
-    //   user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
-    // }
+    let options = {
+      follow_max: 10,
+      follow_set_cookies: true,
+      follow_set_referer: true,
+      follow_keep_method: true,
+      follow_if_same_host: true,
+      follow_if_same_protocol: true,
+      follow_if_same_location: true,
+      cookies: cookies,
+    }
 
-    await needle.defaults({
-      user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
-      parse_response: false,
-    });
-
-    await needle('get', linkFilter ? urlOuter : `${link}?p=1`)
+    await needle('get', linkFilter ? urlOuter : `${link}?p=1`, options)
       .then(async function (res, err) {
         if (err) throw err;
 
         // вычислить количество страниц на странице фэндома
         let $ = cheerio.load(res.body),
-          //   page = $("#no-cookie-warning p").html();
-          // console.log(page);
-          page = $(".pagenav .paging-description b:last-of-type").html();
+          page = $("#no-cookie-warning p").html();
+
+        console.log(page);
+
+        page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
         // дополнить ссылку со страницы фильтра необходимыми параметрами
         let urlInner;
         linkFilter && (urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`);
 
-        await needle('get', linkFilter ? urlInner : `${link}?p=${page}`)
+        await needle('get', linkFilter ? urlInner : `${link}?p=${page}`, options)
           .then(async function (res, err) {
             if (err) throw err;
             $ = cheerio.load(res.body);
@@ -133,7 +161,7 @@ console.time("Конец работы");
     const fanficsArrCopy = [];
 
     // создать объекты с использованием данных из fanfics.json и добавить их в массив fanficsArrCopy
-    for (let i = 0; i < fanficsArr.length; i++) {
+    for (let i = 0; i < 1; i++) {
       const fanficObj = Object.assign({}, fanficProto);
       fanficObj.name = fanficsArr[i].name;
       fanficObj.url = fanficsArr[i].url;
@@ -148,7 +176,11 @@ console.time("Конец работы");
     }
   } // end function readCollection  
 
+
+  cookies = await getCookies('guzeeva', 'L0232bd533b5591b14c4GH'); // вызвать функцию getCookies и установить cookies 
+  console.log(cookies);
   await readCollection(); // вызвать функцию readCollection 
+
 
   if (fanficsArr.length == newFanficsArr.length) {
     await fs.writeFileSync('./fanfics.json', JSON.stringify(newFanficsArr, null, 2)); // записать новые данные в fanfics.json
