@@ -23,6 +23,8 @@ console.time("Конец работы");
 
   // Получить cookies с сайта
   async function getCookies(login, password) {
+    const cookiesObj = {};
+
     await nightmare
       .goto('https://ficbook.net/')
       .click('#jsLogin span')
@@ -34,17 +36,17 @@ console.time("Конец работы");
       .cookies.get()
       .end()
       .then(cookies => {
-        // console.log(cookies[0])
-        return cookies;
+        cookies.forEach(item => {
+          const key = item.name;
+          const value = item.value;
+          cookiesObj[key] = value;
+        })
       })
       .catch(function (error) {
         console.error('Authorization failed:', error);
       });
+    return cookiesObj;
   }
-
-  // function getCookies(login, password) {
-  //   return [{ '__cf_bm': 'd2bffe3e1ed85903aa2ae7e1318f7e3c02156c17-1624018714-1800-AcOFNNZz4iTo+rAcFDEu2SOgybG8xBFhV6UyT6FCvXpnOLcnkoQMuy4GYFeATaauy1ze1nJhIlWD6dePncpPBXwHmSRDJxw10PZ0sHKG51ULA9jZfjvAtpMlIUUNQAzqmA==' }]
-  // }
 
 
   // Получить данные с сайта   
@@ -63,7 +65,9 @@ console.time("Конец работы");
       follow_if_same_host: true,
       follow_if_same_protocol: true,
       follow_if_same_location: true,
+      compressed: true,
       cookies: cookies,
+      user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
     }
 
     await needle('get', linkFilter ? urlOuter : `${link}?p=1`, options)
@@ -178,7 +182,7 @@ console.time("Конец работы");
 
 
   cookies = await getCookies('guzeeva', 'L0232bd533b5591b14c4GH'); // вызвать функцию getCookies и установить cookies 
-  console.log(cookies);
+  // console.log(cookies);
   await readCollection(); // вызвать функцию readCollection 
 
 
