@@ -7,13 +7,43 @@ const needle = require('needle'),
   newFanficsArr = [];
 
 
+//  Создать задержку
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Вывести в консоль кол-во фанфиков в fanfics.json
 console.log(`Всего фэндомов: ${fanficsArr.length}\n`);
 
 // Начать подсчет времени выполнения парсинга 
 console.time("Конец работы");
 
+
 (async () => {
+  let cookies = [];
+
+  // Получить cookies с сайта
+  async function getCookies() {
+    const cookiesObj = {};
+
+    await nightmare
+      .goto('https://ficbook.net/')
+      .cookies.get()
+      .end()
+      .then(cookies => {
+        cookies.forEach(item => {
+          const key = item.name;
+          const value = item.value;
+          cookiesObj[key] = value;
+        })
+      })
+      .catch(function (error) {
+        console.error('Authorization failed:', error);
+      });
+    return cookiesObj;
+  }
+
+
   // Получить данные с сайта   
   async function scrape(fanficContext, link) {
     // проверить, к какому типу относится ссылка
@@ -22,46 +52,63 @@ console.time("Конец работы");
     let urlOuter;
     linkFilter && (urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!#result`);
 
-    try {
-
-      let page;
-      let articles;
-
-      if (!linkFilter) {
-        await nightmare
-          .goto(link)
-          .evaluate(() => document.querySelector('.paging-description b:last-of-type').textContent)
-          .end()
-          .then((num) => {
-            page = num ? num : 1;
-          })
-          .catch(function (error) {
-            console.error(error);
-          });
-
-        await nightmare
-          .goto(`${link}?p=${page}`)
-          .evaluate(() => document.querySelectorAll('.content-section > section:last-of-type .js-toggle-description').length)
-          .end()
-          .then((num) => {
-            console.log(num);
-            articles = num;
-          })
-          .catch(function (error) {
-            console.error(error);
-          });
-      }
-
-      articles = (page - 1) * 20 + articles;
-      console.log(articles);
-      await fanficContext.setArticleCount(articles); // установить значение в свойство articleCount
-      await fanficContext.checkIsNew(); // проверить разницу между oldArticleCount и articleCount 
-      await fanficContext.putData(); // добавить новые данные в массив newFanficsArr 
+    let options = {
+      follow_max: 10,
+      follow_set_cookies: true,
+      follow_set_referer: true,
+      follow_keep_method: true,
+      follow_if_same_host: true,
+      follow_if_same_protocol: true,
+      follow_if_same_location: true,
+      compressed: true,
+      // cookies: cookies,
+      user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
     }
 
-    catch (error) {
-      console.log(error)
-    }
+    await needle('get', linkFilter ? urlOuter : `${link}?p=1`, options)
+      .then(async function (res, err) {
+        if (err) throw err;
+
+        // вычислить количество страниц на странице фэндома
+        let $ = cheerio.load(res.body),
+          page = $("#no-cookie-warning p").html();
+
+        console.log(page);
+
+        page = $(".pagenav .paging-description b:last-of-type").html();
+        page = page ? page : 1;
+        // дополнить ссылку со страницы фильтра необходимыми параметрами
+        let urlInner;
+        linkFilter && (urlInner = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!&p=${page}#result`);
+
+        await needle('get', linkFilter ? urlInner : `${link}?p=${page}`, options)
+          .then(async function (res, err) {
+            if (err) throw err;
+            $ = cheerio.load(res.body);
+            // проверить наличие блока с "горячими работами"
+            const blockSeparator = $(".fanfic-thumb-block").next($(".block-separator")).length;
+            // вычислить количество фанфиков на последней странице
+            let articles;
+            if (linkFilter && blockSeparator) {
+              articles = $(".fanfic-thumb-block").next($(".block-separator")).nextAll($(".fanfic-thumb-block")).length;
+            } else if (linkFilter) {
+              articles = $(".fanfic-thumb-block").length;
+            } else {
+              articles = $(".fanfic-thumb-block:last-of-type .fanfic-inline").length;
+            }
+            // вычислить количество фанфиков на всех страницах
+            articles = (page - 1) * 20 + articles;
+            await fanficContext.setArticleCount(articles); // установить значение в свойство articleCount
+            await fanficContext.checkIsNew(); // проверить разницу между oldArticleCount и articleCount 
+            await fanficContext.putData(); // добавить новые данные в массив newFanficsArr 
+          })
+          .catch(function (err) {
+            console.log(`Needle inner error!\n ${err}\n`)
+          });
+      })
+      .catch(function (err) {
+        console.log(`Needle outer error!\n ${err}\n`)
+      });
   } // end function scrape
 
   // Рабочий объект  
@@ -122,11 +169,15 @@ console.time("Конец работы");
     // вызвать функцию loadArticleCount для каждого объекта из созданного массива      
     for (const fanficsItem of fanficsArrCopy) {
       await fanficsItem.loadArticleCount();
+      await timeout(500); // задержка
     }
   } // end function readCollection  
 
 
+  // cookies = await getCookies(); // вызвать функцию getCookies и установить cookies 
+  // console.log(cookies);
   await readCollection(); // вызвать функцию readCollection 
+
 
   if (fanficsArr.length == newFanficsArr.length) {
     await fs.writeFileSync('./fanfics.json', JSON.stringify(newFanficsArr, null, 2)); // записать новые данные в fanfics.json
