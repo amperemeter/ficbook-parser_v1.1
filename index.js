@@ -23,6 +23,7 @@ console.time("Конец работы");
     linkFilter && (urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!#result`);
 
     try {
+
       let page;
       let articles;
 
