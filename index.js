@@ -2,6 +2,7 @@ const needle = require('needle'),
   cheerio = require('cheerio'),
   fs = require('file-system'),
   fanficsArr = require('./fanfics'),
+  { CookieJar } = require('tough-cookie'),
   newFanficsArr = [];
 
 
@@ -27,6 +28,8 @@ console.time("Конец работы");
     let urlOuter;
     linkFilter && (urlOuter = `${link}&find=%D0%9D%D0%B0%D0%B9%D1%82%D0%B8!#result`);
 
+    const cookieJar = new CookieJar();
+
     let options = {
       follow_max: 10,
       follow_set_cookies: true,
@@ -35,6 +38,7 @@ console.time("Конец работы");
       follow_if_same_host: true,
       follow_if_same_protocol: true,
       follow_if_same_location: true,
+      cookies: cookieJar,
       compressed: true,
       user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
     }
@@ -77,11 +81,11 @@ console.time("Конец работы");
             await fanficContext.putData(); // добавить новые данные в массив newFanficsArr 
           })
           .catch(function (err) {
-            console.log(`Needle inner error!\n ${err}\n`)
+            console.log(`Needle inner error!\n ${err}\n`);
           });
       })
       .catch(function (err) {
-        console.log(`Needle outer error!\n ${err}\n`)
+        console.log(`Needle outer error!\n ${err}\n`);
       });
   } // end function scrape
 
