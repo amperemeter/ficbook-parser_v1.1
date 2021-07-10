@@ -1,8 +1,6 @@
 const needle = require('needle'),
   cheerio = require('cheerio'),
   fs = require('file-system'),
-  Nightmare = require('nightmare'),
-  nightmare = Nightmare({ show: true }),
   fanficsArr = require('./fanfics'),
   newFanficsArr = [];
 
@@ -20,29 +18,6 @@ console.time("Конец работы");
 
 
 (async () => {
-  let cookies = [];
-
-  // Получить cookies с сайта
-  async function getCookies() {
-    const cookiesObj = {};
-
-    await nightmare
-      .goto('https://ficbook.net/')
-      .cookies.get()
-      .end()
-      .then(cookies => {
-        cookies.forEach(item => {
-          const key = item.name;
-          const value = item.value;
-          cookiesObj[key] = value;
-        })
-      })
-      .catch(function (error) {
-        console.error('Authorization failed:', error);
-      });
-    return cookiesObj;
-  }
-
 
   // Получить данные с сайта   
   async function scrape(fanficContext, link) {
@@ -61,7 +36,6 @@ console.time("Конец работы");
       follow_if_same_protocol: true,
       follow_if_same_location: true,
       compressed: true,
-      // cookies: cookies,
       user_agent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36',
     }
 
@@ -71,11 +45,11 @@ console.time("Конец работы");
 
         // вычислить количество страниц на странице фэндома
         let $ = cheerio.load(res.body),
-          page = $("#no-cookie-warning p").html();
+          cookie = $("#no-cookie-warning p").html();
 
-        console.log(page);
+        console.log(cookie);
 
-        page = $(".pagenav .paging-description b:last-of-type").html();
+        let page = $(".pagenav .paging-description b:last-of-type").html();
         page = page ? page : 1;
         // дополнить ссылку со страницы фильтра необходимыми параметрами
         let urlInner;
@@ -174,10 +148,7 @@ console.time("Конец работы");
   } // end function readCollection  
 
 
-  // cookies = await getCookies(); // вызвать функцию getCookies и установить cookies 
-  // console.log(cookies);
   await readCollection(); // вызвать функцию readCollection 
-
 
   if (fanficsArr.length == newFanficsArr.length) {
     await fs.writeFileSync('./fanfics.json', JSON.stringify(newFanficsArr, null, 2)); // записать новые данные в fanfics.json
